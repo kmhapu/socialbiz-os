@@ -52,6 +52,13 @@ export default async function ContentPage() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {(!posts || posts.length === 0) && (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center text-gray-500 py-4">
+                      No posts found.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

@@ -1,0 +1,20 @@
+import Link from "next/link";
+import { ReactNode } from "react";
+
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex min-h-screen">
+      <aside className="w-64 bg-gray-900 text-white p-6">
+        <h1 className="text-2xl font-bold mb-8">SocialBiz OS</h1>
+        <nav className="flex flex-col space-y-4">
+          <Link href="/dashboard" className="hover:text-gray-300">Dashboard</Link>
+          <Link href="/products" className="hover:text-gray-300">Products</Link>
+          <Link href="/orders" className="hover:text-gray-300">Orders</Link>
+        </nav>
+      </aside>
+      <main className="flex-1 p-8 bg-gray-50">
+        {children}
+      </main>
+    </div>
+  );
+}

@@ -106,3 +106,74 @@ export async function confirmOrder(id: string) {
   
   return { success: true };
 }
+
+export async function createOrderFromConversation(formData: FormData) {
+  const supabase = await createClient();
+  
+  const conversationId = formData.get("conversationId") as string;
+  let customerId = formData.get("customerId") as string;
+  const productId = formData.get("productId") as string;
+  const quantity = Number(formData.get("quantity") || 1);
+  
+  // If no customer, we need to create one for this conversation
+  if (!customerId && conversationId) {
+    const { data: conv } = await supabase.from("conversations").select("customer_id").eq("id", conversationId).single();
+    if (conv && conv.customer_id) {
+      customerId = conv.customer_id;
+    } else {
+      const { data: newCustomer, error: customerError } = await supabase.from("customers").insert([
+        { name: "New Customer (From Inbox)" }
+      ]).select().single();
+      if (newCustomer) {
+        customerId = newCustomer.id;
+        // Update conversation to link customer
+        await supabase.from("conversations").update({ customer_id: customerId }).eq("id", conversationId);
+      }
+    }
+  }
+
+  if (!productId) {
+    return { success: false, error: "Product is required" };
+  }
+
+  // Get product
+  const { data: product } = await supabase.from("products").select("*").eq("id", productId).single();
+  
+  if (!product) {
+    return { success: false, error: "Product not found" };
+  }
+  
+  const unit_price = Number(product.price);
+  const line_total = unit_price * quantity;
+  
+  // Create order
+  const { data: order, error: orderError } = await supabase.from("orders").insert([
+    {
+      customer_id: customerId || null,
+      conversation_id: conversationId || null,
+      status: "new",
+      subtotal: line_total,
+      total: line_total,
+    }
+  ]).select().single();
+  
+  if (orderError) {
+    return { success: false, error: orderError.message };
+  }
+  
+  // Create order item
+  await supabase.from("order_items").insert([
+    {
+      order_id: order.id,
+      product_id: product.id,
+      product_name: product.name,
+      unit_price: unit_price,
+      quantity,
+      line_total,
+    }
+  ]);
+
+  revalidatePath("/inbox");
+  revalidatePath("/orders");
+  return { success: true };
+}

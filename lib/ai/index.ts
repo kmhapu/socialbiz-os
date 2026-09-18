@@ -55,3 +55,17 @@ export async function suggestReply(text: string, intent: string): Promise<{ repl
   
   return { reply: null, matchedProductId: null };
 }
+
+export async function generateCaption(productContext: string, language: 'en' | 'bn' | 'banglish'): Promise<string> {
+  // A mock implementation of AI caption generation for the different languages
+  const baseCaption = `Check out our latest product: ${productContext}.`;
+  
+  if (language === 'bn') {
+    return `আমাদের নতুন কালেকশন: ${productContext}! এখনই অর্ডার করুন।`;
+  } else if (language === 'banglish') {
+    return `amader notun collection: ${productContext}! ekhoni order korun.`;
+  }
+  
+  // Default to English
+  return `${baseCaption} Available now, order today!`;
+}

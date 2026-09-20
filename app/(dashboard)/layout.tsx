@@ -23,6 +23,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Link href="/customers" className="hover:text-gray-300">Customers</Link>
             <Link href="/content" className="hover:text-gray-300">Content</Link>
             <Link href="/settings" className="hover:text-gray-300">Settings</Link>
+            <Link href="/pricing" className="hover:text-gray-300 text-green-400">Billing / Pricing</Link>
           </nav>
         </div>
         <form action={signout}>

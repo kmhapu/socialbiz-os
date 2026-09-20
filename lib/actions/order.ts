@@ -3,6 +3,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { getOrder } from "@/lib/data/orders";
+import { processPayment, PaymentMethod } from "@/lib/payments";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function createOrder(formData: FormData) {
   const supabase = await createClient();
@@ -19,6 +22,7 @@ export async function createOrder(formData: FormData) {
   
   const productId = formData.get("productId") as string;
   const quantity = Number(formData.get("quantity") || 1);
+  const paymentMethod = (formData.get("paymentMethod") as PaymentMethod) || "cash_on_delivery";
   
   // Get product
   const { data: product } = await supabase.from("products").select("*").eq("id", productId).single();
@@ -57,6 +61,27 @@ export async function createOrder(formData: FormData) {
   ]);
 
   revalidatePath("/orders");
+
+  let redirectUrl = "";
+  try {
+    const origin = (await headers()).get("origin") || "http://localhost:3000";
+    const payment = await processPayment({
+      orderId: order.id,
+      amount: line_total,
+      method: paymentMethod,
+      successUrl: `${origin}/api/payments/callback`,
+      cancelUrl: `${origin}/orders`,
+      productName: product.name,
+    });
+    redirectUrl = payment.url;
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+
+  if (redirectUrl) {
+    redirect(redirectUrl);
+  }
+  
   return { success: true };
 }
 
@@ -175,5 +200,20 @@ export async function createOrderFromConversation(formData: FormData) {
 
   revalidatePath("/inbox");
   revalidatePath("/orders");
-  return { success: true };
+
+  try {
+    const origin = (await headers()).get("origin") || "http://localhost:3000";
+    const payment = await processPayment({
+      orderId: order.id,
+      amount: line_total,
+      method: "bkash", // Default to bkash for inbox orders as an example
+      successUrl: `${origin}/api/payments/callback`,
+      cancelUrl: `${origin}/inbox`,
+      productName: product.name,
+    });
+    
+    return { success: true, redirectUrl: payment.url };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
 }

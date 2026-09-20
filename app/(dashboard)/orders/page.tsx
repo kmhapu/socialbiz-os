@@ -76,6 +76,15 @@ export default async function OrdersPage() {
                 <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
                 <input type="number" min="1" defaultValue="1" name="quantity" id="quantity" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" />
               </div>
+              <div>
+                <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">Payment Method</label>
+                <select name="paymentMethod" id="paymentMethod" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                  <option value="cash_on_delivery">Cash on Delivery</option>
+                  <option value="stripe">Stripe (Card)</option>
+                  <option value="bkash">bKash (Mock)</option>
+                  <option value="nagad">Nagad (Mock)</option>
+                </select>
+              </div>
               <button type="submit" className="w-full bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700">
                 Create Order
               </button>

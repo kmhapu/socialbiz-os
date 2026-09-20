@@ -82,6 +82,9 @@ export function InboxClient({ initialConversations, products }: { initialConvers
     const res = await createOrderFromConversation(formData);
     if (res.success) {
       alert("Order created successfully!");
+      if (res.redirectUrl) {
+        window.location.href = res.redirectUrl;
+      }
     } else {
       alert("Failed to create order: " + res.error);
     }

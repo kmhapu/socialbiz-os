@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { REQUIRE_ACTIVE_SUBSCRIPTION } from "@/lib/config";
+import { redirect } from "next/navigation";
 import { signout } from "@/app/actions";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
+  // If soft-launch is over, require active subscription
+  // In a full implementation, you would query the DB here to check their real status
+  // e.g., const profile = await supabase.from('profiles').select('status').single();
+  // if (REQUIRE_ACTIVE_SUBSCRIPTION && profile.status !== 'active') redirect('/pricing');
+
   return (
     <div className="flex min-h-screen">
       <aside className="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between">

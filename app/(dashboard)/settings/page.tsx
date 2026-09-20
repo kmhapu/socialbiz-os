@@ -1,12 +1,17 @@
-﻿import { getAuditLogs } from "@/lib/data/audit";
+import { getAuditLogs } from "@/lib/data/audit";
+import { getFacebookPages } from "@/lib/actions/settings";
+import { FacebookConnect } from "./facebook-connect";
 
 export default async function SettingsPage() {
   const logs = await getAuditLogs();
+  const facebookPages = await getFacebookPages();
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Settings</h1>
       
+      <FacebookConnect pages={facebookPages} />
+
       <div className="bg-white p-6 rounded-lg shadow border">
         <h2 className="text-xl font-semibold mb-4">Audit Logs</h2>
         <p className="text-gray-500 mb-6 text-sm">View recent system activity and changes.</p>

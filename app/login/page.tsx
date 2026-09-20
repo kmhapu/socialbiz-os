@@ -17,7 +17,7 @@ export default function LoginPage({
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
+          <form action={login} className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
             <Label className="text-md" htmlFor="email">
               Email
             </Label>
@@ -39,10 +39,10 @@ export default function LoginPage({
             />
             
             <div className="flex flex-col gap-2">
-              <Button formAction={login} className="w-full">
+              <Button type="submit" formAction={login} className="w-full">
                 Sign In
               </Button>
-              <Button formAction={signup} variant="outline" className="w-full">
+              <Button type="submit" formAction={signup} variant="outline" className="w-full">
                 Sign Up
               </Button>
             </div>

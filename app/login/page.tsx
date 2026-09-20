@@ -38,7 +38,7 @@ export default function LoginPage({
               required
             />
             
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
               <Button formAction={login} className="w-full">
                 Sign In
               </Button>
